@@ -7,5 +7,5 @@
 sudo docker run --rm -ti -p 8080:8080 \
     -v /var/www/src/github.com/cyy0523xc/ocr-demo/static:/app/static \
     -v /var/www/src/github.com/cyy0523xc/ocr-demo/ocr.html:/app/templates/ocr.html \
-    -v /var/www/src/github.com/cyy0523xc/ocr-demo/app_idcard.py:/app/app_idcard.py 
+    -v /var/www/src/github.com/cyy0523xc/ocr-demo/app_idcard.py:/app/app_idcard.py \
     "$1" /bin/bash

@@ -37,6 +37,8 @@
                 <tbody id="ocr-result">
                 </tbody>
             </table>
+            <blockquote id="ocr-waste-time" class="layui-elem-quote layui-quote-nm">
+            </blockquote>
         </div>
 
         <hr class="layui-bg-gray">
@@ -65,21 +67,24 @@
                     }
                     ,done: function(res){
                         //上传完毕回调
-                        console.log(res)
+                        console.log(res);
                         layer.closeAll();
 
-                        html = []
+                        html = [];
                         for (i in res.data) {
                             row = res.data[i]
                             html[i] = '<tr><td>'+row[0]+'</td><td>'+row[1]+'</td></tr>'
                         }
-                        res = document.getElementById('ocr-result')
-                        res.innerHTML = html.join("\n")
+                        $('#ocr-result').innerHTML = html.join("\n");
+                        $('#ocr-waste-time').innerHTML = '本次识别消耗时间为：' + res.waste_time + '秒';
                     }
                     ,error: function(){
                         //请求异常回调
                         layer.closeAll();
-                        console.log('接口报错')
+                        layer.open({
+                            id: 'error-msg' //防止重复弹出
+                            ,content: '识别过程出错啦'
+                        });
                     }
                 });
             });

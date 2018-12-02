@@ -33,7 +33,7 @@ idcard_conf = [
 MAX_OCR_USERS = 1
 
 # 当前在线用户数
-current_ocr_users = 0
+web.current_ocr_users = 0
 
 
 def image_to_text(img):
@@ -124,11 +124,10 @@ class OCR:
         return render.ocr()
 
     def POST(self):
-        global current_ocr_users
-        if current_ocr_users >= MAX_OCR_USERS:
+        if web.current_ocr_users >= MAX_OCR_USERS:
             raise Exception('当前服务器最大只支持%d人同时识别，已达到上限。' % MAX_OCR_USERS)
 
-        current_ocr_users += 1
+        web.current_ocr_users += 1
         try:
             x = web.input(file={})
             path = '/tmp/%s.jpg' % str(uuid1())
@@ -136,14 +135,14 @@ class OCR:
                 with open(path, 'wb') as f:
                     f.write(x.file.file.read())
         except ValueError:
-            current_ocr_users -= 1
+            web.current_ocr_users -= 1
             raise Exception('上传文件超过了%s' % upload_max_len_title)
         except:
-            current_ocr_users -= 1
+            web.current_ocr_users -= 1
             raise Exception('上传文件发生了未知错误')
 
         if 'file' not in x:
-            current_ocr_users -= 1
+            web.current_ocr_users -= 1
             raise Exception('没有上传的文件')
 
         # OCR识别
@@ -151,18 +150,18 @@ class OCR:
             img = Image.open(path)
         except Exception:
             remove(path)
-            current_ocr_users -= 1
+            web.current_ocr_users -= 1
             raise Exception("打开文件出错")
 
         timeTake = time.time()
         try:
             res = image_to_text(img)
         except:
-            current_ocr_users -= 1
+            web.current_ocr_users -= 1
             raise Exception("识别过程出错了")
 
         remove(path)
-        current_ocr_users -= 1
+        web.current_ocr_users -= 1
         timeTake = time.time()-timeTake
         return json.dumps({'data': parse_idcard(res),
                            'waste_time': round(timeTake, 4)},

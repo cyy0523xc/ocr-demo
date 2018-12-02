@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>二代身份证OCR识别</title>
+        <link rel="stylesheet" href="static/layui/css/layui.css" media="all">
+    </head>
+    <body>
+
+        <div>
+            <ul class="layui-nav" lay-filter="">
+                <li class="layui-nav-item"><a href="">二代身份证OCR识别样例</a></li>
+            </ul>
+        </div>
+
+        <hr class="layui-bg-gray">
+        <div>
+            <button type="button" class="layui-btn" id="upload">
+                <i class="layui-icon">&#xe67c;</i>上传身份证图片
+            </button>
+        </div>
+
+        <hr class="layui-bg-gray">
+
+        <div>
+            <table class="layui-table">
+                <colgroup>
+                    <col width="150">
+                    <col>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>识别项</th>
+                        <th>识别值</th>
+                    </tr>
+                </thead>
+                <tbody id="ocr-result">
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="layui-bg-gray">
+        <div>
+            <blockquote class="layui-elem-quote">上传的照片在识别完成之后，会自动删除。</blockquote>
+        </div>
+
+        <script src="static/layui/layui.js"></script>
+        <script>
+            layui.use('upload', function(){
+                var upload = layui.upload;
+                var layer = layui.layer;
+
+                //执行实例
+                var uploadInst = upload.render({
+                    elem: '#upload' //绑定元素
+                    ,url: '/ocr' //上传接口
+                    ,before: function() {
+                        // 显示正在上传
+                        layer.open({
+                            id: 'processing' //防止重复弹出
+                            ,content: '正在识别中，可能需要25秒左右... '
+                            ,btn: []
+                        });
+                    }
+                    ,done: function(res){
+                        //上传完毕回调
+                        console.log(res)
+                        layer.closeAll();
+
+                        html = []
+                        for (i in res.data) {
+                            row = res.data[i]
+                            html[i] = '<tr><td>'+row[0]+'</td><td>'+row[1]+'</td></tr>'
+                        }
+                        res = document.getElementById('ocr-result')
+                        res.innerHTML = html.join("\n")
+                    }
+                    ,error: function(){
+                        //请求异常回调
+                        layer.closeAll();
+                        console.log('接口报错')
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

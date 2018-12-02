@@ -75,8 +75,8 @@
                             row = res.data[i]
                             html[i] = '<tr><td>'+row[0]+'</td><td>'+row[1]+'</td></tr>'
                         }
-                        $$('#ocr-result').innerHTML = html.join("\n");
-                        $$('#ocr-waste-time').innerHTML = '本次识别消耗时间为：' + res.waste_time + '秒';
+                        document.getElementById('ocr-result').innerHTML = html.join("\n");
+                        document.getElementById('ocr-waste-time').innerHTML = '本次识别消耗时间为：' + res.waste_time + '秒';
                     }
                     ,error: function(){
                         //请求异常回调

@@ -16,7 +16,7 @@
         <hr class="layui-bg-gray">
         <div>
             <button type="button" class="layui-btn" id="upload">
-                <i class="layui-icon">&#xe67c;</i>上传身份证图片
+                <i class="layui-icon">&#xe67c;</i>上传身份证的正面图片
             </button>
         </div>
 
@@ -43,7 +43,12 @@
 
         <hr class="layui-bg-gray">
         <div>
-            <blockquote class="layui-elem-quote">1. 上传的照片在识别完成之后，会自动删除。<br />2. 识别结果也不会在服务器有保留。</blockquote>
+            <blockquote class="layui-elem-quote">
+                1. 上传的照片在识别完成之后，会自动删除。<br />
+                2. 识别结果也不会在服务器有保留。<br />
+                3. 作为演示，只识别身份证的正面部分。<br />
+                4. 待识别的图片应该尽量端正且清晰。
+            </blockquote>
         </div>
 
         <script src="static/layui/layui.js"></script>
@@ -61,7 +66,7 @@
                         layer.open({
                             id: 'processing' //防止重复弹出
                             ,title: '正在识别中'
-                            ,content: '1核1G的测试服务器太渣，跑得很慢，可能需要耗时一分钟... '
+                            ,content: '1核1G的服务器正在拼命加载，可能需要耗时一分钟... '
                             ,btn: []
                         });
                     }

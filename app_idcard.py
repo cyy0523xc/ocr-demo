@@ -3,6 +3,7 @@
 @author: Alex
 """
 import re
+import cgi
 from os import remove
 from PIL import Image
 import json
@@ -14,6 +15,8 @@ import model
 
 render = web.template.render('templates')
 web.config.debug = True
+cgi.maxlen = 2 * 1024 * 1024  # 2MB
+upload_max_len_title = '2MB'
 urls = ('/ocr', 'OCR')
 
 # 身份证正则匹配
@@ -25,6 +28,12 @@ idcard_conf = [
     "^.?住址(?P<住址>.*)$",
     "^.?公民身份号码(?P<公民身份号码>\\d{17,17}[\\dA-Z])$",
 ]
+
+# 控制同时在线的人数
+MAX_OCR_USERS = 1
+
+# 当前在线用户数
+current_ocr_users = 0
 
 
 def image_to_text(img):
@@ -115,13 +124,26 @@ class OCR:
         return render.ocr()
 
     def POST(self):
-        x = web.input(file={})
-        path = '/tmp/%s.jpg' % str(uuid1())
-        if 'file' in x:
-            with open(path, 'wb') as f:
-                f.write(x.file.file.read())
+        global current_ocr_users
+        if current_ocr_users >= MAX_OCR_USERS:
+            raise Exception('当前服务器最大只支持%d人同时识别，已达到上限。' % MAX_OCR_USERS)
 
-        else:
+        current_ocr_users += 1
+        try:
+            x = web.input(file={})
+            path = '/tmp/%s.jpg' % str(uuid1())
+            if 'file' in x:
+                with open(path, 'wb') as f:
+                    f.write(x.file.file.read())
+        except ValueError:
+            current_ocr_users -= 1
+            raise Exception('上传文件超过了%s' % upload_max_len_title)
+        except:
+            current_ocr_users -= 1
+            raise Exception('上传文件发生了未知错误')
+
+        if 'file' not in x:
+            current_ocr_users -= 1
             raise Exception('没有上传的文件')
 
         # OCR识别
@@ -129,13 +151,19 @@ class OCR:
             img = Image.open(path)
         except Exception:
             remove(path)
+            current_ocr_users -= 1
             raise Exception("打开文件出错")
 
         timeTake = time.time()
-        res = image_to_text(img)
-        timeTake = time.time()-timeTake
+        try:
+            res = image_to_text(img)
+        except:
+            current_ocr_users -= 1
+            raise Exception("识别过程出错了")
 
         remove(path)
+        current_ocr_users -= 1
+        timeTake = time.time()-timeTake
         return json.dumps({'data': parse_idcard(res),
                            'waste_time': round(timeTake, 4)},
                           ensure_ascii=True)

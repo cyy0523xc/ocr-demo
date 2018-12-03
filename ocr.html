@@ -66,8 +66,9 @@
                         layer.open({
                             id: 'processing' //防止重复弹出
                             ,title: '正在识别中'
-                            ,content: '1核1G的服务器正在拼命加载，可能需要耗时一分钟... '
+                            ,content: '<i class="layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop"></i> 1核1G的服务器正在拼命加载，可能需要耗时一分钟... '
                             ,btn: []
+                            ,closeBtn: 0
                         });
                     }
                     ,done: function(res){

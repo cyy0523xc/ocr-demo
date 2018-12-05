@@ -11,4 +11,5 @@ sudo docker run --rm -ti --name=ocr-py \
     -v /var/www/src/github.com/cyy0523xc/ocr-demo/static:/app/static \
     -v /var/www/src/github.com/cyy0523xc/ocr-demo/ocr.html:/app/templates/ocr.html \
     -v /var/www/src/github.com/cyy0523xc/ocr-demo/app_idcard.py:/app/app_idcard.py \
+    -v /var/www/src/github.com/cyy0523xc/ocr-demo/test.py:/app/test.py \
     $*

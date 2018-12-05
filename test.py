@@ -16,4 +16,5 @@ def recognice(path):
 if __name__ == '__main__':
     import sys
     text = recognice(sys.argv[1])
-    print(text)
+    for t in text:
+        print(t['text'])
